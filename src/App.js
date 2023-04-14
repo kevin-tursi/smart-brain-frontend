@@ -11,10 +11,6 @@ import Rank from './components/Rank/Rank';
 import './App.css';
 window.process = {};
 
-const app = new Clarifai.App({
-  apiKey: 'b5158ec0d0b74eb9a5667879465986fc'
-});
-
 const returnClarifaiRequestOptions = (imageUrl) => {
   const PAT = 'ce4a9c2002fd410683c444b2f815c5e5';
   const USER_ID = 'kevintursi';
@@ -104,7 +100,22 @@ class App extends Component {
     this.setState({ imageUrl: this.state.input });
     fetch("https://api.clarifai.com/v2/models/" + 'face-detection' + "/outputs", returnClarifaiRequestOptions(this.state.input))
       .then(response => response.json())
-      .then(result => this.displayFaceBox(this.calculateFaceLocation(result)))
+      .then(result => {
+        if (result) {
+          fetch('http://localhost:3001/image', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: this.state.user.id
+            })
+          })
+            .then(response => response.json())
+            .then(count => {
+              this.setState(Object.assign(this.state.user, { entries: count }))
+            })
+        }
+        this.displayFaceBox(this.calculateFaceLocation(result))
+      })
       .catch(error => console.log('error', error));
   }
 
@@ -128,7 +139,7 @@ class App extends Component {
         {route === 'home'
           ? <div>
             <Logo />
-            <Rank />
+            <Rank name={this.state.user.name} entries={this.state.user.entries} />
             <ImageLinkForm
               onInputChange={this.onInputChange}
               onButtonSubmit={this.onButtonSubmit}
@@ -137,7 +148,7 @@ class App extends Component {
           </div>
           : (
             route === 'signin' ?
-              <SignIn onRouteChange={this.onRouteChange} />
+              <SignIn onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
               : <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
           )
 
