@@ -11,8 +11,6 @@ import Rank from './components/Rank/Rank';
 import './App.css';
 window.process = {};
 
-// test
-
 const returnClarifaiRequestOptions = (imageUrl) => {
   const PAT = 'ce4a9c2002fd410683c444b2f815c5e5';
   const USER_ID = 'kevintursi';
