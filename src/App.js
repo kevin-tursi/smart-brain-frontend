@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import ParticlesBg from 'particles-bg';
-import Clarifai from 'clarifai';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Navigation from './components/Navigation/Navigation';
 import SignIn from './components/SignIn/SignIn';
@@ -15,7 +14,6 @@ const returnClarifaiRequestOptions = (imageUrl) => {
   const PAT = 'ce4a9c2002fd410683c444b2f815c5e5';
   const USER_ID = 'kevintursi';
   const APP_ID = 'my-first-application';
-  const MODEL_ID = 'face-detection';
   const IMAGE_URL = imageUrl;
 
   const raw = JSON.stringify({
@@ -43,24 +41,25 @@ const returnClarifaiRequestOptions = (imageUrl) => {
   };
 }
 
+const initialState = {
+    input: '',
+    imageUrl: '',
+    box: {},
+    route: 'signin',
+    isSignedIn: false,
+    user: {
+      id: '',
+      email: '',
+      name: '',
+      entries: 0,
+      joined: ''
+    }
+  }
+
 class App extends Component {
   constructor() {
     super();
-    this.state = {
-      input: '',
-      imageUrl: '',
-      box: {},
-      route: 'signin',
-      isSignedIn: false,
-      user: {
-        id: '',
-        email: '',
-        name: '',
-        email: '',
-        entries: 0,
-        joined: ''
-      }
-    }
+    this.state = initialState;
   }
 
   loadUser = (data) => {
@@ -113,6 +112,7 @@ class App extends Component {
             .then(count => {
               this.setState(Object.assign(this.state.user, { entries: count }))
             })
+            .catch(console.log)
         }
         this.displayFaceBox(this.calculateFaceLocation(result))
       })
@@ -121,7 +121,7 @@ class App extends Component {
 
   onRouteChange = (route) => {
     if (route === 'signout') {
-      this.setState({ isSignedIn: false })
+      this.setState(initialState)
     } else if (route === 'home') {
       this.setState({ isSignedIn: true })
     }
