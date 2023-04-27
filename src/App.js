@@ -8,38 +8,39 @@ import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
 import './App.css';
+
 window.process = {};
 
-const returnClarifaiRequestOptions = (imageUrl) => {
-  const PAT = 'ce4a9c2002fd410683c444b2f815c5e5';
-  const USER_ID = 'kevintursi';
-  const APP_ID = 'my-first-application';
-  const IMAGE_URL = imageUrl;
+// const returnClarifaiRequestOptions = (imageUrl) => {
+//   const PAT = 'ce4a9c2002fd410683c444b2f815c5e5';
+//   const USER_ID = 'kevintursi';
+//   const APP_ID = 'my-first-application';
+//   const IMAGE_URL = imageUrl;
 
-  const raw = JSON.stringify({
-    "user_app_id": {
-      "user_id": USER_ID,
-      "app_id": APP_ID
-    },
-    "inputs": [
-      {
-        "data": {
-          "image": {
-            "url": IMAGE_URL
-          }
-        }
-      }
-    ]
-  });
-  return {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Key ' + PAT
-    },
-    body: raw
-  };
-}
+//   const raw = JSON.stringify({
+//     "user_app_id": {
+//       "user_id": USER_ID,
+//       "app_id": APP_ID
+//     },
+//     "inputs": [
+//       {
+//         "data": {
+//           "image": {
+//             "url": IMAGE_URL
+//           }
+//         }
+//       }
+//     ]
+//   });
+//   return {
+//     method: 'POST',
+//     headers: {
+//       'Accept': 'application/json',
+//       'Authorization': 'Key ' + PAT
+//     },
+//     body: raw
+//   };
+// }
 
 const initialState = {
     input: '',
@@ -96,11 +97,18 @@ class App extends Component {
   }
 
   onButtonSubmit = () => {
+    console.log('this is the website link', this.state.input)
     this.setState({ imageUrl: this.state.input });
-    fetch("https://api.clarifai.com/v2/models/" + 'face-detection' + "/outputs", returnClarifaiRequestOptions(this.state.input))
-      .then(response => response.json())
-      .then(result => {
-        if (result) {
+    fetch('http://localhost:3001/imageurl', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              input: this.state.input
+            })
+          })
+          .then(response => response.json())
+      .then(response => {
+        if (response) {
           fetch('http://localhost:3001/image', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -114,7 +122,7 @@ class App extends Component {
             })
             .catch(console.log)
         }
-        this.displayFaceBox(this.calculateFaceLocation(result))
+        this.displayFaceBox(this.calculateFaceLocation(response))
       })
       .catch(error => console.log('error', error));
   }
