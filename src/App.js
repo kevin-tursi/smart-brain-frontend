@@ -97,7 +97,6 @@ class App extends Component {
   }
 
   onButtonSubmit = () => {
-    console.log('this is the website link', this.state.input)
     this.setState({ imageUrl: this.state.input });
     fetch('http://localhost:3001/imageurl', {
             method: 'POST',
@@ -120,7 +119,7 @@ class App extends Component {
             .then(count => {
               this.setState(Object.assign(this.state.user, { entries: count }))
             })
-            .catch(console.log)
+            .catch(error => console.log('error', error));
         }
         this.displayFaceBox(this.calculateFaceLocation(response))
       })
