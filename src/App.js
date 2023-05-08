@@ -11,37 +11,6 @@ import './App.css';
 
 window.process = {};
 
-// const returnClarifaiRequestOptions = (imageUrl) => {
-//   const PAT = 'ce4a9c2002fd410683c444b2f815c5e5';
-//   const USER_ID = 'kevintursi';
-//   const APP_ID = 'my-first-application';
-//   const IMAGE_URL = imageUrl;
-
-//   const raw = JSON.stringify({
-//     "user_app_id": {
-//       "user_id": USER_ID,
-//       "app_id": APP_ID
-//     },
-//     "inputs": [
-//       {
-//         "data": {
-//           "image": {
-//             "url": IMAGE_URL
-//           }
-//         }
-//       }
-//     ]
-//   });
-//   return {
-//     method: 'POST',
-//     headers: {
-//       'Accept': 'application/json',
-//       'Authorization': 'Key ' + PAT
-//     },
-//     body: raw
-//   };
-// }
-
 const initialState = {
     input: '',
     imageUrl: '',
@@ -98,7 +67,7 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({ imageUrl: this.state.input });
-    fetch('http://localhost:3001/imageurl', {
+    fetch('https://boiling-dusk-33045.herokuapp.com//imageurl', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -108,7 +77,7 @@ class App extends Component {
           .then(response => response.json())
       .then(response => {
         if (response) {
-          fetch('http://localhost:3001/image', {
+          fetch('https://boiling-dusk-33045.herokuapp.com/:3001/image', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
